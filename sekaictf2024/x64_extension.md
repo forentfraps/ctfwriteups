@@ -71,6 +71,7 @@ And sure enough, after opening the flag.txt.enc in the hex editor it checks up.
 
 After storing the block, program updates XORKEY2 with the newly encoded block.
 
+## Writing the decrypter
 
 This is enough of debugging since from now we can write a decrypter, we have all the keys after all. I tried doing this with aesdec and aesdeclast instructions, however for some reason aesdeclast does not seem to revert aesenclast, or I am just stupid, so I decided to use my own AES implementation (lol).
 
