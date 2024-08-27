@@ -3,7 +3,7 @@
 Source code for my solution is in the same repo and the same folder as this writeup
 
 ## Initial analysis
-It comes as a elf 64 executable and a flag.txt.enc, which implies that the program takes a flag.txt as input and produces an .enc version.
+It comes as a elf 64 executable (x64_extension, binary included in this repo) and a flag.txt.enc, which implies that the program takes a flag.txt as input and produces an .enc version.
 
 After opening it in IDA and locating the main function we see it loading 16 byte values which looked like hardcoded keys.
 
@@ -20,7 +20,7 @@ After running the debugger and checking function after functions return values i
 
 ![TRkJMd-DtZM](https://github.com/user-attachments/assets/cae6e0ca-24f6-47be-9b5a-e99a62fbdc21)
 
-Locating the function which read the contents, it seems that theres only 1 funcion before the program starts processing the output
+Locating the function which read the contents, it seems that theres only 1 function before the program starts processing the output
 
 ![image](https://github.com/user-attachments/assets/acac40b5-a427-4d04-ab6b-15ac569858e0)
 
