@@ -1,5 +1,7 @@
 # Write up for SEKAI CTF x64_extension
 
+Source code for my solution is in the same repo and the same folder as this writeup
+
 ## Initial analysis
 It comes as a elf 64 executable and a flag.txt.enc, which implies that the program takes a flag.txt as input and produces an .enc version.
 
