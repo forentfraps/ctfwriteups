@@ -20,7 +20,12 @@ After running the debugger and checking function after functions return values i
 
 ![TRkJMd-DtZM](https://github.com/user-attachments/assets/cae6e0ca-24f6-47be-9b5a-e99a62fbdc21)
 
-Locating the function which read the contents, it seems that theres only 1 funcion before the program starts processing the output, suggesting it is worth checking it out - sub_40450D.
+Locating the function which read the contents, it seems that theres only 1 funcion before the program starts processing the output
+
+![image](https://github.com/user-attachments/assets/acac40b5-a427-4d04-ab6b-15ac569858e0)
+
+
+Suggesting it is worth checking it out - sub_40450D.
 
 ![image](https://github.com/user-attachments/assets/2de0dd5b-7a62-4f47-8061-4d553fc27a44)
 
