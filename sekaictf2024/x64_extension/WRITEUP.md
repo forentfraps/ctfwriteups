@@ -65,13 +65,13 @@ Going back to the sub_404519, after it generates the keys it enters a loop:
 
 ![image](https://github.com/user-attachments/assets/dfe8f264-8550-4cd6-b8a3-7acddecd25bb)
 
-It takes 16 bytes of read data, xors it with 2 xor keys, which are at the start 
+It takes 16 bytes of read data, xors it with 2 xor keys (we see them being loaded at the start of the function, or they can be checked on the first iteration of the loop), which are at the start 
 ```
 XORKEY1 - 00 01 02 03 04 05 06 07 08 09 0A 0B 0C 0D 0E 0F
 XORKEY2 - FF FE FD FC FB FA F9 F8 F7 F6 F5 F4 F3 F2 F1 F0
 ```
-And then does 13 aesenc instruction with 13 round keys and at last does a aesenclast with the 14th key.
-After which the encrypted block is stored back into memory, and to verify that it really is our block and no more encryptions are happening we can fill flag.txt with some blanc data, run the program normally once, and then put a breakpoint after the first iteration of this loop to check.
+And then does 13 aesenc instruction with 13 round keys and at last does a aesenclast with the 14th key. After all of that it updates the XORKEY2 with the newly encrypted block.
+Then the encrypted block is stored back into memory, and to verify that it really is our block and no more encryptions are happening we can fill flag.txt with some blanc data, run the program normally once, and then put a breakpoint after the first iteration of this loop to check.
 And sure enough, after opening the flag.txt.enc in the hex editor it checks up. 
 
 ![image](https://github.com/user-attachments/assets/48ea8f50-565d-479d-a998-fe8c21b05d61)
