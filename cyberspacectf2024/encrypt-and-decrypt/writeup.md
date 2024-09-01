@@ -161,16 +161,16 @@ We leaked the pointers, we have an arbitrary write primitive, we are set?
 The stack we wanted to have at the end:
 
 ```
-+----------------------+------------------+--------------------------+--------------+
-|      Address         |      Value       |         Comment          | Printf arg № |
-+----------------------+------------------+--------------------------+--------------+
-|     retaddr - 0x10   |     CANARY       | we just don't touch that |       1      |
-|     retaddr - 0x8    |        1         | unknown                  |       2      |
-|     retaddr          |  pop rdi; ret    | Gadget                   |       3      |
-|     retaddr + 0x8    |  ptr to /bin/sh  | string from libc         |       4      |
-|     retaddr + 0x10   |    ret gadget    | (needed for alignment)   |       5      |
-|     retaddr + 0x18   |    system()      | function from libc       |       6      |
-+----------------------+------------------+--------------------------+--------------+
++----------------------+------------------+--------------------------+
+|      Address         |      Value       |         Comment          |
++----------------------+------------------+--------------------------+
+|     retaddr - 0x10   |     CANARY       | we just don't touch that |
+|     retaddr - 0x8    |        1         | unknown                  |
+|     retaddr          |  pop rdi; ret    | Gadget                   |
+|     retaddr + 0x8    |  ptr to /bin/sh  | string from libc         |
+|     retaddr + 0x10   |    ret gadget    | (needed for alignment)   |
+|     retaddr + 0x18   |    system()      | function from libc       |
++----------------------+------------------+--------------------------+
 
 ```
 
