@@ -1,0 +1,14 @@
+CompileFlags:
+  Add:
+    - I"C:/libs/pin/source/include/pin"
+    - I"C:/libs/pin/extras/stlport/include"
+    - I"C:/libs/pin/extras"
+    - I"C:/libs/pin/extras/libstdc++/include"
+    - I"C:/libs/pin/extras/crt/include"
+    - I"C:/libs/pin/extras/crt"
+    - I"C:/libs/pin/extras/crt/include/arch-x86_64"
+    - I"C:/libs/pin/extras/crt/include/kernel/uapi"
+    - I"C:/libs/pin/extras/crt/include/kernel/uapi/asm-x86"
+    - I"C:/libs/pin/source/include/pin/gen"
+    - I"C:/libs/pin/extras/components/include"
+    - I"C:/libs/pin/extras/xed-intel64/include/xed"

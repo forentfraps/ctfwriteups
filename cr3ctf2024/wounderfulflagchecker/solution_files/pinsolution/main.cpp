@@ -1,4 +1,5 @@
 #include "pin.H"
+
 #include <cstdio>
 
 FILE *TraceFile;
