@@ -1,4 +1,4 @@
-# Encrypt-and-decrypt writeup
+# Encryption and decryption service writeup
 
 I don't really do pwn, but organazers dropped 2 android (YUCK), 1 python pickle( EW) and simple rust rev, so there was nothing to do.
 It seems that the intended solution used gets() to overflow the buffer, but I solved without it
