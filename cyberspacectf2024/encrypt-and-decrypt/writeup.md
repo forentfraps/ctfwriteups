@@ -30,7 +30,7 @@ Decrypt:
 
 Immidiatly I noticied gets, overflowed the buffer and gracefully smashed the stack and segfaulted.
 
-Upon closer inspection I decided to check what is on the stack and to noone's surprise there is a stack canary right after the 
+Upon closer inspection I decided to check what is on the stack and to noone's surprise there is a stack canary right after the start of the function
 ```
 mov     rax, fs:28h
 ```
