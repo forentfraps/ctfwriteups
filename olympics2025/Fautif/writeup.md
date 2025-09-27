@@ -47,7 +47,7 @@ I decided to check the strings, it turned out to be seven 26-wide uppercase stri
 Initial guess is that it uses these alphabets as permutation look up tables.
 
 After initialisation function, it inputs user data with getdelim
-```
+```c
  if ( getdelim((char **)&qword_20320, (size_t *)algn_20318, -1, stdin) > 0 )
     sub_F40(qword_20320);
 ```
