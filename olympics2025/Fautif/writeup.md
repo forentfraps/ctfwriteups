@@ -1,3 +1,5 @@
+# Fautif writeup
+
 ### Initial scouting
 Opening the binary in DIE reveals that its AARCH64 linux elf. 
 
