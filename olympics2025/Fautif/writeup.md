@@ -1,7 +1,8 @@
 ### Initial scouting
 Opening the binary in DIE reveals that its AARCH64 linux elf. 
 
-![[Pasted image 20250927184526.png]]
+<img width="852" height="548" alt="Pasted image 20250927184526" src="https://github.com/user-attachments/assets/c6923768-06fa-441a-ba40-7b557e839b8c" />
+
 
 ### Static analysis in IDA
 
@@ -10,7 +11,7 @@ Opening Ida and skimming the code, we can locate the main function: sub_A00.
 #### Main function
 
 It initially loads some strings and calls a function, initial guess would be that this is some cipher initiation. 
-```aarch64
+```asm
 STP             X29, X30, [SP,#var_50]!
 ADRP            X0, #off_202B0@PAGE
 ADRP            X1, #qword_1480@PAGE
@@ -40,7 +41,8 @@ BL              sub_E08
 ```
 
 I decided to check the strings, it turned out to be seven 26-wide uppercase strings, looking like scrambled alphabets. 
-![[Pasted image 20250927190050.png]]
+<img width="931" height="344" alt="Pasted image 20250927190050" src="https://github.com/user-attachments/assets/65894e73-e7ee-4b2e-98cb-e3665833ae27" />
+
 
 Initial guess is that it uses these alphabets as permutation look up tables.
 
@@ -93,7 +95,8 @@ The main focus is  now on the evasive sub_F40 which I've postponed as much as po
 And after a bit more cleaning and LLM probing, it become obvious that this is a modified Enigma machine with 6 rotors and a permutation layer before them.
 
 It does a massive initialisation with somewhat non-trivial permutations which I decided to postpone for now, in search of an easier solution.
-![[Pasted image 20250927191755.png]]
+<img width="1124" height="621" alt="Pasted image 20250927191755" src="https://github.com/user-attachments/assets/6997ed7c-a64e-443a-b3dd-0da97d13e013" />
+
 
 The key insight I got is that it is a stream cipher, meaning it encrypts char by char. In addition its input and output sets are ASCII printable chars,  this is true since the rotors only contained uppercase ascii chars.
 
@@ -177,7 +180,8 @@ If the score increases for the string, then we lock the current char as correct 
 
 When I run the full script, after 2-3 minutes we are able to get the flag
 
-![[Pasted image 20250927195500.png]]
+<img width="1631" height="324" alt="Pasted image 20250927195500" src="https://github.com/user-attachments/assets/6740ac51-0a4e-4cad-9f7e-dfcc410d1cfe" />
+
 
 The flag is:
 
