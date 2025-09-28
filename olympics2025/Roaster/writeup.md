@@ -75,11 +75,13 @@ I decided to initially go for httpd, since it makes more sense, we are working w
 ### Static analysis 
 #### Main
 The webserver starts by a manual logging in with password:
-![[Pasted image 20250927214926.png]]
+<img width="883" height="625" alt="Pasted image 20250927214926" src="https://github.com/user-attachments/assets/e28abd73-fc3c-4250-a07b-4ba1b9ad4fde" />
+
 
 After that it digests stuff with sha256 (we know that by the constants), and inits the network stack, forking the process for each new connection:
 
-![[Pasted image 20250927215311.png]]
+<img width="953" height="562" alt="Pasted image 20250927215311" src="https://github.com/user-attachments/assets/4426d307-6e9f-4d60-ba88-8b44b53d8e31" />
+
 
 #### req_handler
 
@@ -103,7 +105,8 @@ It turns out to be a wrapper which packs the info and appends the http header fo
 
 In this one we can actually see that it fetches: admin_password, device_serial, wlan_psk, meaning that this config probably contains the info we need.
 
-![[Pasted image 20250927221008.png]]
+<img width="673" height="516" alt="Pasted image 20250927221008" src="https://github.com/user-attachments/assets/bf8cabb7-fe4e-4e11-aabf-5de600695482" />
+
 
 #### Post processing of the fetched data
 
@@ -132,7 +135,8 @@ Inside it I saw a call another function being called with a string "1.3.1", surr
 
 Clicking through functions in hopes of finding any constants i stumble upon:
 
-![[Pasted image 20250928005929.png]]
+<img width="515" height="410" alt="Pasted image 20250928005929" src="https://github.com/user-attachments/assets/40ef7e1a-9fb6-448e-b8c9-cd712f699c33" />
+
 Which reveals precious constants: `0, 0x43CBA687, 0xC7903CD4, 0x845B9A53, 0xCF270873, ...`
 
 After googling which it becomes obvious that the library in question is zlib
