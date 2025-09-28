@@ -6,7 +6,7 @@ I forgot my [**Roaster**](https://ctf.olympics.tech/tasks/Roaster_de24314c8950ad
 `nc 65.109.184.55 8080`
 ```
 
-### Initial scouting
+## Initial scouting
 
 Since it is a firmware and not a direct binary I run standard linux utils against it like binwalk and file:
 
@@ -72,8 +72,8 @@ echo "Starting system..."
 
 I decided to initially go for httpd, since it makes more sense, we are working with a webserver after all. 
 
-### Static analysis 
-#### Main
+## Static analysis 
+### Main
 The webserver starts by a manual logging in with password:
 <img width="883" height="625" alt="Pasted image 20250927214926" src="https://github.com/user-attachments/assets/e28abd73-fc3c-4250-a07b-4ba1b9ad4fde" />
 
@@ -83,7 +83,7 @@ After that it digests stuff with sha256 (we know that by the constants), and ini
 <img width="953" height="562" alt="Pasted image 20250927215311" src="https://github.com/user-attachments/assets/4426d307-6e9f-4d60-ba88-8b44b53d8e31" />
 
 
-#### req_handler
+### req_handler
 
 It exploses the following  endpoints:
 ```
@@ -97,18 +97,18 @@ It exploses the following  endpoints:
 
 Upon going to the actual webserver, and trying those, every one redirects to login, except for gen141234/backup, which fetches backup.bin - a file approximately 410 bytes with a header - `ASBP` and seeming random data. It is worth exploring how the backup is generated: sub_402390
 
-#### sub_402390 - http backup generation
+### sub_402390 - http backup generation
 
 It turns out to be a wrapper which packs the info and appends the http header for the actual function: sub_403788
 
-#### sub_403788 - real backup generation
+### sub_403788 - real backup generation
 
 In this one we can actually see that it fetches: admin_password, device_serial, wlan_psk, meaning that this config probably contains the info we need.
 
 <img width="673" height="516" alt="Pasted image 20250927221008" src="https://github.com/user-attachments/assets/bf8cabb7-fe4e-4e11-aabf-5de600695482" />
 
 
-#### Post processing of the fetched data
+### Post processing of the fetched data
 
 after that it mixes the length of the buffer around with 
 
@@ -129,7 +129,7 @@ encodedBuf = alloc(encodedSize);
 sub_404AF0(encodedBuf, &encodedSize, kvBuf, totalBufLen, 9);
 ```
 
-#### sub_404AF0
+### sub_404AF0
 
 Inside it I saw a call another function being called with a string "1.3.1", surrounded by proper error handling and messages like: "insufficient memory" or "stream error" hinting that this is some external library. 
 
@@ -141,7 +141,7 @@ Which reveals precious constants: `0, 0x43CBA687, 0xC7903CD4, 0x845B9A53, 0xCF27
 
 After googling which it becomes obvious that the library in question is zlib
 
-#### Processing of the zlib compressed data
+### Processing of the zlib compressed data
 
 After compression it calls what looks like a padding function:
 
@@ -187,7 +187,7 @@ After compression it calls what looks like a padding function:
 
 This is a very heavy hint that encryption is coming very soon (probably AES)
 
-#### The SHA256 and a bunch of random
+### The SHA256 and a bunch of random
 
 After padding comes initialisation of the following string:
 
@@ -208,7 +208,7 @@ sha256_finalize(&shaState0, &digest0);
 Then it generates 3 random ints, and follows it up with a `0x41353135`, putting it into another buffer. 
 
 
-#### Key derivation and encryption
+### Key derivation and encryption
 
 The results of a previous step are now passed inside of a function alongside an pointer. The function is AES key derivation (who would have guessed), we can clearly see the rcon vector constants along with the sbox. 
 
@@ -233,7 +233,7 @@ int __fastcall generate_aes_key_from_sha256(_BYTE *expanded_key, char *input_key
 
 It stores the iv vector after the expanded key and returns
 
-#### Encryption
+### Encryption
 
 The encryption function is a standard AES-CBC, which unpacks the IV from the key array and encrypts the compressed data.
 
@@ -296,7 +296,7 @@ int __fastcall aes_encrypt_cbc(int aes_ctx, char *data_buf, unsigned int data_le
 ```
 
 
-#### Yet another SHA256
+### Yet another SHA256
 
 After the encryption we initiate another set of SHA256 states and hash the resulting ciphertext.
 
@@ -351,12 +351,12 @@ Note: the code ommitted the last 4 bytes of IV, since they were hardcoded before
 
 With all that we are pretty much ready to write a decryptor!
 
-#### Endianness
+### Endianness
 
 An attentive reader could have observed that near the magic `0x41534250` is a comment stating that its `ASBP`, however if you store it normally with LE as it is shown in the code, it should actually be `PBSA`, this was noticed by me quite early, but the same issue actually arises when it stores the last 4 bytes of IV (this cost me ~2 hours). 
 
 
-#### The decryption
+### The decryption
 
 Well there's not much to be said, the key is the first 16 bytes of `A:<SERIAL>:S` hashed with sha256, the IV is fetched from the header + 4 bytes == `0x41353135`
 in !Big Endian!. The serial could be observed on the website and is equal to -> `SN405CBA66B5`. After decrypting the payload we see a valid Zlib header: `78 DA`
